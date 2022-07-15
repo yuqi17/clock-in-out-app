@@ -21,10 +21,22 @@ function App() {
   const [disableBtnClockIn, setDisableBtnClockIn] = useState(true);
 
   const init = async () => {
-    const index = (await db).getFromIndex('attendance', 'date', dayjs().format('YYYY-MM-DD'));
-    const { clockInTime } = await (index);
-    setDisableBtnClockIn(!!clockInTime);// 已经打卡了就不能再打了
-    setClockInTime(clockInTime);
+    try {
+      const response = await fetch('http://worldtimeapi.org/api/timezone/Asia/Shanghai');
+      const { datetime } = await response.json();
+      const currentTime = dayjs(datetime);
+      const index = (await db).getFromIndex('attendance', 'date', currentTime.format('YYYY-MM-DD'));
+      const data = await index;
+      setDisableBtnClockIn(!!data.clockInTime);// 已经打卡了就不能再打了
+      if (data.clockInTime) {
+        setClockInTime(data.clockInTime);
+        const safeClockOutTime = computeClockOutTime(dayjs(data.clockInTime));
+        setSafeClockOutTime(safeClockOutTime);
+      }
+    } catch (error) {
+      alert(error)
+    }
+
   }
 
   useEffect(() => {
@@ -58,27 +70,27 @@ function App() {
     }
   }, [clockInTime]);
 
-  const computeClockOutTime = currentTime => {
-    const dateStr = currentTime.format('YYYY-MM-DD');
-    if (currentTime.isAfter(`${dateStr} 10:30:00`))
+  const computeClockOutTime = clockInTime => {
+    const dateStr = clockInTime.format('YYYY-MM-DD');
+    if (clockInTime.isAfter(`${dateStr} 10:30:00`))
       throw new Error('超过10:30到岗, 且未请假记缺勤0.5天!');
     const normalClockOutTime = '18:00:00';
-    if (currentTime.isBefore(`${dateStr} 9:00:00`))
+    if (clockInTime.isBefore(`${dateStr} 9:00:00`))
       return normalClockOutTime;
     const rangeMap = {
       "9:00:00-9:30:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes, 'minutes'),
       "9:31:00-10:00:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes + 2 * 7, 'minutes'),
       "10:01:00-11:30:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes + 2 * 30 + 3 * 5, 'minutes'),
     };
-    let clockOutTime = null;
+    let safeClockOutTime = null;
     Object.keys(rangeMap).forEach(range => {
       const [start, end] = range.split('-');
-      const hint = currentTime.isBetween(`${dateStr} ${start}`, `${dateStr} ${end}`, "minute", "[]");
+      const hint = clockInTime.isBetween(`${dateStr} ${start}`, `${dateStr} ${end}`, "minute", "[]");
       if (hint) {
-        return clockOutTime = rangeMap[range](currentTime.minute());
+        return safeClockOutTime = rangeMap[range](clockInTime.minute());
       }
     });
-    return clockOutTime && clockOutTime.format('YYYY-MM-DD HH:mm:ss');
+    return safeClockOutTime && safeClockOutTime.format('YYYY-MM-DD HH:mm:ss');
   };
 
   const handleClockIn = async () => {
@@ -88,12 +100,17 @@ function App() {
       const currentTime = dayjs(datetime);
       const clockInTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
       setClockInTime(clockInTime);// 通常比实际时间慢,可忽略不计
-      const safeClockOutTime = computeClockOutTime(currentTime)
+      const safeClockOutTime = computeClockOutTime(clockInTime);
       setSafeClockOutTime(safeClockOutTime);
     } catch (error) {
       alert(error.message);
     }
   };
+
+  const handleClockOut = () => {
+
+  }
+
   return (
     <div className={styles.app}>
       <p>
@@ -102,7 +119,7 @@ function App() {
       <p>打卡时间为:<time>{clockInTime}</time></p>
       {safeClockOutTime && (<p>应打卡时间为:<time>{safeClockOutTime}</time></p>)}
       <p>
-        <button disabled={disableBtnClockIn} onClick={handleClockIn}>上班打卡</button>
+        <button onClick={handleClockOut}>下班打卡</button>
       </p>
     </div>
   )
