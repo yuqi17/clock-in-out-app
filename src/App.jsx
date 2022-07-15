@@ -11,9 +11,9 @@ function App() {
     dayjs.extend(isBetween)
   }, []);
   const computeClockOutTime = currentTime => {
+    const dateStr = currentTime.format('YYYY-MM-DD');
     if (currentTime.isAfter(`${dateStr} 10:30:00`))
       throw new Error('超过10:30到岗, 且未请假记缺勤0.5天!');
-    const dateStr = currentTime.format('YYYY-MM-DD');
     const normalClockOutTime = '18:00:00';
     if (currentTime.isBefore(`${dateStr} 9:00:00`))
       return normalClockOutTime;
