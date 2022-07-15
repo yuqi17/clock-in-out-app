@@ -18,6 +18,7 @@ const db = openDB('attendance-db', 1, {
 function App() {
   const [clockInTime, setClockInTime] = useState();
   const [safeClockOutTime, setSafeClockOutTime] = useState();
+  const [clockOutTime, setClockOutTime] = useState();
   const [disableBtnClockIn, setDisableBtnClockIn] = useState(true);
 
   const init = async () => {
@@ -28,6 +29,7 @@ function App() {
       const index = (await db).getFromIndex('attendance', 'date', currentTime.format('YYYY-MM-DD'));
       const data = await index;
       setDisableBtnClockIn(!!data.clockInTime);// 已经打卡了就不能再打了
+      setClockOutTime(data.clockOutTime);
       if (data.clockInTime) {
         setClockInTime(data.clockInTime);
         const safeClockOutTime = computeClockOutTime(dayjs(data.clockInTime));
@@ -44,7 +46,7 @@ function App() {
     init();
   }, []);
 
-  const recordTime = async (date, clockInTime) => {
+  const recordClockInTime = async (date, clockInTime) => {
     // 查询今天有没有打卡
     const index = (await db).getFromIndex('attendance', 'date', date);
     const data = await (index);
@@ -66,7 +68,7 @@ function App() {
 
   useEffect(() => {
     if (clockInTime) {
-      recordTime(dayjs(clockInTime).format('YYYY-MM-DD'), clockInTime);
+      recordClockInTime(dayjs(clockInTime).format('YYYY-MM-DD'), clockInTime);
     }
   }, [clockInTime]);
 
@@ -107,8 +109,12 @@ function App() {
     }
   };
 
-  const handleClockOut = () => {
-
+  const handleClockOut = async () => {
+    const response = await fetch('http://worldtimeapi.org/api/timezone/Asia/Shanghai');
+    const { datetime } = await response.json();
+    const currentTime = dayjs(datetime);
+    const clockOutTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
+    setClockOutTime(clockOutTime);
   }
 
   return (
@@ -116,11 +122,12 @@ function App() {
       <p>
         <button disabled={disableBtnClockIn} onClick={handleClockIn}>上班打卡</button>
       </p>
-      <p>打卡时间为:<time>{clockInTime}</time></p>
+      <p>上班打卡时间为:<time className={styles.clockIn}>{clockInTime}</time></p>
       {safeClockOutTime && (<p>应打卡时间为:<time>{safeClockOutTime}</time></p>)}
       <p>
         <button onClick={handleClockOut}>下班打卡</button>
       </p>
+      <p>下班打卡时间为:<time className={styles.clockOut}>{clockOutTime}</time></p>
     </div>
   )
 }
