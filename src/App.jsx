@@ -28,6 +28,8 @@ function App() {
       const currentTime = dayjs(datetime);
       const index = (await db).getFromIndex('attendance', 'date', currentTime.format('YYYY-MM-DD'));
       const data = await index;
+      if (!data)
+        return;
       setDisableBtnClockIn(!!data.clockInTime);// 已经打卡了就不能再打了
       setClockOutTime(data.clockOutTime);
       if (data.clockInTime) {
