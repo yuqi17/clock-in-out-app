@@ -1,7 +1,7 @@
 
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import { openDB, deleteDB, wrap, unwrap } from 'idb';
+import { openDB } from 'idb';
 import { useEffect, useState } from 'react';
 import styles from './App.module.scss'
 
