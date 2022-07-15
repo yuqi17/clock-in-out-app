@@ -1,0 +1,14 @@
+.app{
+  padding: 20px;
+  background-color: #00bebe;
+  display: flex;
+  flex-direction: column;
+  button{
+    margin: 10px 0;
+  }
+  p > time{
+    color: #fff;
+    font-weight: bold;
+    font-size: 20px;
+  }
+}

@@ -1,0 +1,21 @@
+{
+    "name": "pwa-basic",
+    "short_name": "PWA基础",
+    "start_url": "/index.html",
+    "icons":[
+        {
+            "src": "/images/icon128.png",
+            "sizes": "128x128",
+            "type":"image/png"
+        },
+        {
+            "src": "/images/icon144.png",
+            "sizes": "144x144",
+            "type":"image/png"
+        }
+    ],
+    "description": "这个是一个PWA基础的Demo",
+    "background_color": "skyblue",
+    "theme_color": "black",
+    "display": "standalone"
+}
