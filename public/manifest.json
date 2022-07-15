@@ -1,6 +1,6 @@
 {
-    "name": "pwa-basic",
-    "short_name": "PWA基础",
+    "name": "打卡小工具",
+    "short_name": "打卡tools",
     "start_url": "/index.html",
     "icons":[
         {
@@ -14,7 +14,7 @@
             "type":"image/png"
         }
     ],
-    "description": "这个是一个PWA基础的Demo",
+    "description": "守护打工人血汗钱",
     "background_color": "skyblue",
     "theme_color": "black",
     "display": "standalone"

@@ -1,6 +1,7 @@
 
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
+import { openDB, deleteDB, wrap, unwrap } from 'idb';
 import { useEffect, useState } from 'react';
 import styles from './App.module.scss'
 
@@ -8,7 +9,8 @@ function App() {
   const [clockInTime, setClockInTime] = useState();
   const [clockOutTime, setClockOutTime] = useState();
   useEffect(() => {
-    dayjs.extend(isBetween)
+    dayjs.extend(isBetween);
+    openDB("attendance");
   }, []);
   const computeClockOutTime = currentTime => {
     const dateStr = currentTime.format('YYYY-MM-DD');
