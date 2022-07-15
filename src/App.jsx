@@ -11,13 +11,16 @@ function App() {
     dayjs.extend(isBetween)
   }, []);
   const computeClockOutTime = currentTime => {
-    const dateStr = currentTime.format('YYYY-MM-DD');
     if (currentTime.isAfter(`${dateStr} 10:30:00`))
       throw new Error('超过10:30到岗, 且未请假记缺勤0.5天!');
+    const dateStr = currentTime.format('YYYY-MM-DD');
+    const normalClockOutTime = '18:00:00';
+    if (currentTime.isBefore(`${dateStr} 9:00:00`))
+      return normalClockOutTime;
     const rangeMap = {
-      "9:00:00-9:30:00": minutes => dayjs(`${dateStr} 18:00:00`).add(1 * minutes, 'minutes'),
-      "9:31:00-10:00:00": minutes => dayjs(`${dateStr} 18:00:00`).add(1 * minutes + 2 * 7, 'minutes'),
-      "10:01:00-11:30:00": minutes => dayjs(`${dateStr} 18:00:00`).add(1 * minutes + 2 * 30 + 3 * 5, 'minutes'),
+      "9:00:00-9:30:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes, 'minutes'),
+      "9:31:00-10:00:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes + 2 * 7, 'minutes'),
+      "10:01:00-11:30:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes + 2 * 30 + 3 * 5, 'minutes'),
     };
     let clockOutTime = null;
     Object.keys(rangeMap).forEach(range => {
