@@ -114,7 +114,7 @@ function App() {
       const currentTime = dayjs(datetime);
       const clockInTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
       setClockInTime(clockInTime);// 通常比实际时间慢,可忽略不计
-      const safeClockOutTime = computeClockOutTime(clockInTime);
+      const safeClockOutTime = computeClockOutTime(currentTime);
       setSafeClockOutTime(safeClockOutTime);
     } catch (error) {
       alert(error.message);
