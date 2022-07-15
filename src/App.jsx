@@ -57,13 +57,18 @@ function App() {
       });
       setDisableBtnClockIn(true);
     }
-    //  else {
-    //   (await db).put('attendance', {
-    //     ...data,
-    //     clockInTime
-    //   });
-    // }
+  }
 
+  const recordClockOutTime = async (date, clockOutTime) => {
+    // 查询今天有没有打卡
+    const index = (await db).getFromIndex('attendance', 'date', date);
+    const data = await (index);
+    if (!data)
+      return;
+    (await db).put('attendance', {
+      ...data,
+      clockOutTime
+    });
   }
 
   useEffect(() => {
@@ -71,6 +76,12 @@ function App() {
       recordClockInTime(dayjs(clockInTime).format('YYYY-MM-DD'), clockInTime);
     }
   }, [clockInTime]);
+
+  useEffect(() => {
+    if (clockOutTime) {
+      recordClockOutTime(dayjs(clockInTime).format('YYYY-MM-DD'), clockOutTime);
+    }
+  }, [clockOutTime]);
 
   const computeClockOutTime = clockInTime => {
     const dateStr = clockInTime.format('YYYY-MM-DD');
