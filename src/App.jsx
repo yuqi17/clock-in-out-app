@@ -33,10 +33,10 @@ function App() {
     return clockOutTime && clockOutTime.format('YYYY-MM-DD HH:mm:ss');
   };
   const handleClockIn = async () => {
-    const response = await fetch('http://worldtimeapi.org/api/timezone/Asia/Shanghai');
-    const { datetime } = await response.json();
-    const currentTime = dayjs(datetime);
     try {
+      const response = await fetch('http://worldtimeapi.org/api/timezone/Asia/Shanghai');
+      const { datetime } = await response.json();
+      const currentTime = dayjs(datetime);
       setClockInTime(currentTime.format('YYYY-MM-DD HH:mm:ss'));// 通常比实际时间慢,可忽略不计
       const time = computeClockOutTime(currentTime)
       setClockOutTime(time);
