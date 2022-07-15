@@ -41,7 +41,7 @@ function App() {
       const time = computeClockOutTime(currentTime)
       setClockOutTime(time);
     } catch (error) {
-      alert(error.message)
+      alert(error.message);
     }
   };
   return (
