@@ -5,9 +5,10 @@
   flex-direction: column;
   button{
     margin: 10px 0;
+    width: 100%;
   }
-  p > time{
-    color: #fff;
+  p > time:first-child{
+    color: #0f0;
     font-weight: bold;
     font-size: 20px;
   }
