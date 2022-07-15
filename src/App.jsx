@@ -19,7 +19,7 @@ function App() {
   const [clockInTime, setClockInTime] = useState();
   const [safeClockOutTime, setSafeClockOutTime] = useState();
   const [clockOutTime, setClockOutTime] = useState();
-  const [disableBtnClockIn, setDisableBtnClockIn] = useState(true);
+  const [disableBtnClockIn, setDisableBtnClockIn] = useState(false);
 
   const init = async () => {
     try {
@@ -38,7 +38,6 @@ function App() {
     } catch (error) {
       alert(error)
     }
-
   }
 
   useEffect(() => {
@@ -136,7 +135,7 @@ function App() {
       <p>上班打卡时间为:<time className={styles.clockIn}>{clockInTime}</time></p>
       {safeClockOutTime && (<p>应打卡时间为:<time>{safeClockOutTime}</time></p>)}
       <p>
-        <button onClick={handleClockOut}>下班打卡</button>
+        <button disabled={!disableBtnClockIn} onClick={handleClockOut}>下班打卡</button>
       </p>
       <p>下班打卡时间为:<time className={styles.clockOut}>{clockOutTime}</time></p>
     </div>
