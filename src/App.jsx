@@ -125,6 +125,13 @@ function App() {
     const response = await fetch('http://worldtimeapi.org/api/timezone/Asia/Shanghai');
     const { datetime } = await response.json();
     const currentTime = dayjs(datetime);
+
+    if (currentTime.isBefore(safeClockOutTime)) {
+      if (!window.confirm('早于应打卡时间视为早退,是否继续打卡?')) {
+        return;
+      }
+    }
+
     const clockOutTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
     setClockOutTime(clockOutTime);
   }
