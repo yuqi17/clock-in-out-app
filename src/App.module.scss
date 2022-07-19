@@ -1,8 +1,17 @@
 .app{
+  position: relative;
   padding: 20px;
   background-color: #00bebe;
   display: flex;
   flex-direction: column;
+
+  .export{
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    cursor: pointer;
+  }
+
   button{
     margin: 10px 0;
     width: 100%;

@@ -2,6 +2,7 @@
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import { openDB } from 'idb';
+import writeXlsxFile from 'write-excel-file'
 import { useEffect, useState } from 'react';
 import styles from './App.module.scss'
 
@@ -134,10 +135,40 @@ function App() {
 
     const clockOutTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
     setClockOutTime(clockOutTime);
+  };
+
+  const handleExportExcel = async () => {
+
+    const rows = await (await (db)).getAll('attendance');
+    const schema = [
+      {
+        column: '日期',
+        type: String,
+        value: data => data.date,
+        width: 15
+      },
+      {
+        column: '上班打卡时间',
+        type: String,
+        value: data => data.clockInTime,
+        width: 20
+      },
+      {
+        column: '下班打卡时间',
+        type: String,
+        value: data => data.clockOutTime,
+        width: 20
+      },
+    ]
+    await writeXlsxFile(rows, {
+      schema,
+      fileName: '考勤.xlsx'
+    })
   }
 
   return (
     <div className={styles.app}>
+      <a onClick={handleExportExcel} className={styles.export}>导出为excel</a>
       <p>
         <button disabled={disableBtnClockIn} onClick={handleClockIn}>上班打卡</button>
       </p>

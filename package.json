@@ -14,7 +14,8 @@
     "idb": "^7.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "sass": "^1.53.0"
+    "sass": "^1.53.0",
+    "write-excel-file": "^1.4.8"
   },
   "devDependencies": {
     "@types/react": "^18.0.15",
