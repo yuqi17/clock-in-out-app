@@ -21,10 +21,10 @@
     time{
       font-weight: bold;
       font-size: 20px;
-      &.clockIn{
+      &.ok{
         color: #0f0;
       }
-      &.clockOut{
+      &.danger{
           color: #f00;
       }
     }

@@ -21,6 +21,8 @@ function App() {
   const [safeClockOutTime, setSafeClockOutTime] = useState();
   const [clockOutTime, setClockOutTime] = useState();
   const [disableBtnClockIn, setDisableBtnClockIn] = useState(false);
+  const [isClockInTimeOk, setIsClockInTimeOk] = useState(true);
+  const [isClockOutTimeOk, setIsClockOutTimeOk] = useState(true);
 
   const init = async () => {
     try {
@@ -37,6 +39,9 @@ function App() {
         setClockInTime(data.clockInTime);
         const safeClockOutTime = computeClockOutTime(dayjs(data.clockInTime));
         setSafeClockOutTime(safeClockOutTime);
+      }
+      if (data.clockOutTime) {
+        setClockOutTime(data.clockOutTime);
       }
     } catch (error) {
       alert(error)
@@ -75,13 +80,17 @@ function App() {
 
   useEffect(() => {
     if (clockInTime) {
-      recordClockInTime(dayjs(clockInTime).format('YYYY-MM-DD'), clockInTime);
+      const dateStr = dayjs(clockInTime).format('YYYY-MM-DD');
+      setIsClockInTimeOk(dayjs(clockInTime).isBefore(`${dateStr} 10:30:00`));// 写在这里可以节省代码,不写在打卡的函数里
+      recordClockInTime(dateStr, clockInTime);
     }
   }, [clockInTime]);
 
   useEffect(() => {
     if (clockOutTime) {
-      recordClockOutTime(dayjs(clockInTime).format('YYYY-MM-DD'), clockOutTime);
+      const dateStr = dayjs(clockOutTime).format('YYYY-MM-DD');
+      setIsClockOutTimeOk(dayjs(clockOutTime).isSame(safeClockOutTime) || dayjs(clockOutTime).isAfter(safeClockOutTime));
+      recordClockOutTime(dateStr, clockOutTime);
     }
   }, [clockOutTime]);
 
@@ -172,12 +181,12 @@ function App() {
       <p>
         <button disabled={disableBtnClockIn} onClick={handleClockIn}>上班打卡</button>
       </p>
-      <p>上班打卡时间为:<time className={styles.clockIn}>{clockInTime}</time></p>
-      {safeClockOutTime && (<p>应打卡时间为:<time>{safeClockOutTime}</time></p>)}
+      <p>上班打卡时间为:<time className={isClockInTimeOk ? styles.ok : styles.danger}>{clockInTime}</time></p>
+      {safeClockOutTime && (<p>应打卡时间为:<time style={{ fontSize: 25 }}>{safeClockOutTime}</time></p>)}
       <p>
         <button disabled={!disableBtnClockIn} onClick={handleClockOut}>下班打卡</button>
       </p>
-      <p>下班打卡时间为:<time className={styles.clockOut}>{clockOutTime}</time></p>
+      <p>下班打卡时间为:<time className={isClockOutTimeOk ? styles.ok : styles.danger}>{clockOutTime}</time></p>
     </div>
   )
 }
