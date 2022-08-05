@@ -16,8 +16,6 @@ const db = openDB('attendance-db', 1, {
   },
 });
 
-const generateFunc = (expr, dateStr, normalClockOutTime) => new Function('m', `dayjs(${dateStr} ${normalClockOutTime}).add(${expr}, 'minutes')`)
-
 function App() {
   const [clockInTime, setClockInTime] = useState();
   const [safeClockOutTime, setSafeClockOutTime] = useState();
@@ -104,9 +102,9 @@ function App() {
     if (clockInTime.isBefore(`${dateStr} 9:00:00`))
       return normalClockOutTime;
     const rangeMap = {
-      "9:00:00-9:30:00": generateFunc('1 * m', dateStr, normalClockOutTime),//dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes, 'minutes'),
-      "9:31:00-10:00:00": generateFunc('1 * m + 2 * 7', dateStr, normalClockOutTime),//dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes + 2 * 7, 'minutes'),
-      "10:01:00-11:30:00": generateFunc('1 * m + 2 * 30 + 3 * 5', dateStr, normalClockOutTime)//dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes + 2 * 30 + 3 * 5, 'minutes'),
+      "9:00:00-9:30:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes, 'minutes'),
+      "9:31:00-10:00:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes + 2 * 7, 'minutes'),
+      "10:01:00-11:30:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes + 2 * 30 + 3 * 5, 'minutes'),
     };
     let safeClockOutTime = null;
     Object.keys(rangeMap).forEach(range => {
