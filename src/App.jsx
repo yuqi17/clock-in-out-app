@@ -38,15 +38,16 @@ function App() {
 
   return (
     <div className={styles.app}>
-      <input onChange={e => setClockInTime(e.target.value)} placeholder='eg: 10:30' />
-      <button onClick={() => {
-        try {
-          const dateTimeStr = `${dayjs().format('YYYY-MM-DD')} ${clockInTime}:00`;
-          setResult(computeClockOutTime(dayjs(dateTimeStr)))
-        } catch (error) {
-          alert(error.message)
+      <input onChange={e => setClockInTime(e.target.value)} placeholder='eg: 输入 10:30 然后回车' onKeyDown={e => {
+        if (e.key === 'Enter') {
+          try {
+            const dateTimeStr = `${dayjs().format('YYYY-MM-DD')} ${clockInTime}:00`;
+            setResult(computeClockOutTime(dayjs(dateTimeStr)))
+          } catch (error) {
+            alert(error.message)
+          }
         }
-      }}>计算</button>
+      }} />
       <p>{result}</p>
     </div>
   )
