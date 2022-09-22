@@ -1,24 +1,16 @@
 
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import { openDB } from 'idb';
-import writeXlsxFile from 'write-excel-file'
 import { useEffect, useState } from 'react';
 import styles from './App.module.scss'
-
-const db = openDB('attendance-db', 1, {
-  upgrade(db) {
-    const store = db.createObjectStore('attendance', {
-      keyPath: 'id',
-      autoIncrement: true,
-    });
-    store.createIndex('date', 'date');
-  },
-});
 
 function App() {
   const [clockInTime, setClockInTime] = useState();
   const [result, setResult] = useState('');
+
+  useEffect(() => {
+    dayjs.extend(isBetween);
+  }, []);
 
   const computeClockOutTime = clockInTime => {
     const dateStr = clockInTime.format('YYYY-MM-DD');
@@ -46,11 +38,14 @@ function App() {
 
   return (
     <div className={styles.app}>
-      <input onChange={e => setClockInTime(e.target.value)} />
+      <input onChange={e => setClockInTime(e.target.value)} placeholder='eg: 10:30' />
       <button onClick={() => {
-        // 时分
-        const dateTimeStr = `${dayjs().format('YYYY-MM-DD')} ${clockInTime}:00`;
-        setResult(computeClockOutTime(dayjs(dateTimeStr)))
+        try {
+          const dateTimeStr = `${dayjs().format('YYYY-MM-DD')} ${clockInTime}:00`;
+          setResult(computeClockOutTime(dayjs(dateTimeStr)))
+        } catch (error) {
+          alert(error.message)
+        }
       }}>计算</button>
       <p>{result}</p>
     </div>
