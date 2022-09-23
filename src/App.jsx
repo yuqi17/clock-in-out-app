@@ -1,12 +1,23 @@
 
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useLayoutEffect } from 'react';
 import styles from './App.module.scss'
 
 function App() {
-  const [clockInTime, setClockInTime] = useState();
   const [result, setResult] = useState('');
+  const [value, setValue] = useState();
+
+  useLayoutEffect(() => {
+    try {
+      if (!value)
+        return;
+      const dateTimeStr = `${dayjs().format('YYYY-MM-DD')} ${value}:00`;
+      setResult(computeClockOutTime(dayjs(dateTimeStr)))
+    } catch (error) {
+      alert(error.message);
+    }
+  }, [value])
 
   useEffect(() => {
     dayjs.extend(isBetween);
@@ -38,16 +49,9 @@ function App() {
 
   return (
     <div className={styles.app}>
-      <input onChange={e => setClockInTime(e.target.value)} placeholder='eg: 输入 10:30 然后回车' onKeyDown={e => {
-        if (e.key === 'Enter') {
-          try {
-            const dateTimeStr = `${dayjs().format('YYYY-MM-DD')} ${clockInTime}:00`;
-            setResult(computeClockOutTime(dayjs(dateTimeStr)))
-          } catch (error) {
-            alert(error.message)
-          }
-        }
-      }} />
+      <input value={value} onChange={e => {
+        setValue(e.target.value);
+      }} placeholder='eg: 输入 10:30' />
       <p>{result}</p>
     </div>
   )
