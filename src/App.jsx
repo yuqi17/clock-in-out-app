@@ -23,7 +23,10 @@ function App() {
     dayjs.extend(isBetween);
   }, []);
 
+  const calc = clockInTime => clockInTime.hour() === 9 ? (clockInTime.minute() - 30) : 30
+
   const computeClockOutTime = clockInTime => {
+    console.log(clockInTime.format('YYYY-MM-DD hh:mm:ss'), clockInTime.hour(), clockInTime.minute(), (clockInTime.hour() * 60 + clockInTime.minute()) - 9 * 60, '<<<<')
     const dateStr = clockInTime.format('YYYY-MM-DD');
     if (clockInTime.isAfter(`${dateStr} 10:30:00`))
       throw new Error('超过10:30到岗, 且未请假记缺勤0.5天!');
@@ -32,8 +35,8 @@ function App() {
       return normalClockOutTime;
     const rangeMap = {
       "9:00:00-9:30:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes, 'minutes'),
-      "9:31:00-10:00:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes + 2 * 7, 'minutes'),
-      "10:01:00-11:30:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * minutes + 2 * 30 + 3 * 5, 'minutes'),
+      "9:31:00-10:00:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * 30 + 2 * calc(clockInTime), 'minutes'),
+      "10:01:00-11:30:00": minutes => dayjs(`${dateStr} ${normalClockOutTime}`).add(1 * 30 + 2 * 30 + 3 * clockInTime.minute(), 'minutes'),
     };
     let safeClockOutTime = null;
     Object.keys(rangeMap).forEach(range => {
