@@ -26,7 +26,6 @@ function App() {
   const calc = clockInTime => clockInTime.hour() === 9 ? (clockInTime.minute() - 30) : 30
 
   const computeClockOutTime = clockInTime => {
-    console.log(clockInTime.format('YYYY-MM-DD hh:mm:ss'), clockInTime.hour(), clockInTime.minute(), (clockInTime.hour() * 60 + clockInTime.minute()) - 9 * 60, '<<<<')
     const dateStr = clockInTime.format('YYYY-MM-DD');
     if (clockInTime.isAfter(`${dateStr} 10:30:00`))
       throw new Error('超过10:30到岗, 且未请假记缺勤0.5天!');
