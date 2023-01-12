@@ -45,8 +45,9 @@ h1 {
 }
 
 button {
+  margin: 0 4px;
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: 1px solid #00bebe;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
@@ -55,12 +56,12 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+input {
+  padding: 10px 20px;
+  border: 1px solid #00bebe;
+  border-radius: 4px;
+  margin: 10px;
 }
 
 @media (prefers-color-scheme: light) {
